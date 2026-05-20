@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Tester - 正则表达式在线测试工具</title>
+  <meta name="description" content="免费在线正则表达式测试工具。实时匹配、分组捕获、替换调试、常用模式速查。浏览器端处理，无需安装。">
+  <meta name="keywords" content="regex tester, regular expression tester, regex online, regex tester online free, regex 测试工具">
+  <link rel="canonical" href="https://regex-tester.vercel.app/">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <h1 class="logo">🔍 Regex Tester</h1>
+        <p class="tagline">正则表达式在线测试 · 实时匹配 · 分组捕获 · 替换调试</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main container">
+    <!-- Mode Toggle -->
+    <nav class="tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true" data-mode="test" tabindex="0">
+        <span class="tab-icon">🎯</span>
+        <span class="tab-label">匹配测试</span>
+      </button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="replace" tabindex="-1">
+        <span class="tab-icon">✏️</span>
+        <span class="tab-label">替换</span>
+      </button>
+    </nav>
+
+    <!-- === Main Input Section === -->
+    <section class="input-section">
+      <!-- Regex Pattern -->
+      <div class="input-row">
+        <div class="input-group regex-input-group">
+          <label for="regex-pattern">正则表达式</label>
+          <div class="regex-field">
+            <span class="regex-delimiter">/</span>
+            <input type="text" id="regex-pattern" class="regex-input" placeholder="[a-z]+@\w+\.\w+" spellcheck="false" autofocus>
+            <span class="regex-delimiter">/</span>
+            <input type="text" id="regex-flags" class="regex-flags" value="gm" placeholder="flags" maxlength="6" spellcheck="false">
+          </div>
+        </div>
+        <div class="input-group flags-group">
+          <label>标志位</label>
+          <div class="flag-badges">
+            <button class="flag-btn" data-flag="g">g <span class="flag-info">全局</span></button>
+            <button class="flag-btn" data-flag="i">i <span class="flag-info">忽略大小写</span></button>
+            <button class="flag-btn active" data-flag="m">m <span class="flag-info">多行</span></button>
+            <button class="flag-btn" data-flag="s">s <span class="flag-info">点号匹配换行</span></button>
+            <button class="flag-btn" data-flag="u">u <span class="flag-info">Unicode</span></button>
+            <button class="flag-btn" data-flag="y">y <span class="flag-info">粘连</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="input-row">
+        <div class="input-group">
+          <label>常用模式</label>
+          <div class="preset-badges">
+            <button class="preset-btn" data-pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" data-flags="">📧 Email</button>
+            <button class="preset-btn" data-pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" data-flags="gi">🔗 URL</button>
+            <button class="preset-btn" data-pattern="1[3-9]\d{9}" data-flags="">📱 手机号</button>
+            <button class="preset-btn" data-pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]).{8,}$" data-flags="">🔒 强密码</button>
+            <button class="preset-btn" data-pattern="\d{4}[-/]\d{1,2}[-/]\d{1,2}" data-flags="">📅 日期</button>
+            <button class="preset-btn" data-pattern="(?<=<title>)(.*?)(?=<\/title>)" data-flags="gi">🏷️ HTML标签内容</button>
+            <button class="preset-btn" data-pattern="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b" data-flags="gi">📨 通用Email</button>
+            <button class="preset-btn" data-pattern="^(\d{1,3}\.){3}\d{1,3}$" data-flags="">🌐 IPv4</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Replace Input (hidden by default) -->
+      <div class="input-row" id="replace-row" style="display:none">
+        <div class="input-group">
+          <label for="replace-with">替换为</label>
+          <div class="replace-hint">
+            <input type="text" id="replace-with" class="text-input" placeholder="替换文本（可用 $1, $2 引用分组）" spellcheck="false">
+            <span class="hint-text">$& 匹配全文 · $1 第一个分组 · $` 匹配前 · $' 匹配后</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test String -->
+      <div class="input-row stretch">
+        <div class="input-group">
+          <div class="label-row">
+            <label for="test-string">测试文本</label>
+            <div class="label-actions">
+              <button class="btn btn-sm" onclick="loadSample()">📝 加载示例</button>
+              <button class="btn btn-sm" onclick="clearTest()">清空</button>
+              <span id="char-count" class="size-badge">0 chars</span>
+            </div>
+          </div>
+          <textarea id="test-string" class="code-editor" placeholder="在这里输入或粘贴要测试的文本..." spellcheck="false"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- === Results Section === -->
+    <section class="results-section" id="results-section">
+      <!-- Match Highlight Preview -->
+      <div class="result-card">
+        <div class="card-header">
+          <h3>匹配预览</h3>
+          <div class="card-actions">
+            <span id="match-count" class="count-badge">0 matches</span>
+          </div>
+        </div>
+        <div id="highlight-preview" class="highlight-box">
+          <span class="placeholder-text">输入正则和测试文本，匹配将高亮显示在这里</span>
+        </div>
+      </div>
+
+      <!-- Match Details -->
+      <div class="result-card" id="details-card">
+        <div class="card-header">
+          <h3>匹配详情</h3>
+          <span id="match-time" class="time-badge"></span>
+        </div>
+        <div id="match-details" class="match-details">
+          <span class="placeholder-text">暂无匹配结果</span>
+        </div>
+      </div>
+
+      <!-- Replace Result -->
+      <div class="result-card" id="replace-card" style="display:none">
+        <div class="card-header">
+          <h3>替换结果</h3>
+          <div class="card-actions">
+            <button class="btn btn-sm" onclick="copyReplaceResult()">📋 复制</button>
+          </div>
+        </div>
+        <div id="replace-result" class="highlight-box">
+          <span class="placeholder-text">替换结果将显示在这里</span>
+        </div>
+      </div>
+
+      <!-- Pattern Explanation -->
+      <div class="result-card">
+        <div class="card-header">
+          <h3>模式说明</h3>
+        </div>
+        <div id="pattern-explanation" class="pattern-explain">
+          <span class="placeholder-text">输入正则表达式后将自动分析</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>🔍 Regex Tester — 所有处理在浏览器端完成，无需安装</p>
+      <p class="footer-small">纯前端工具 · 零服务端 · 隐私安全</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
