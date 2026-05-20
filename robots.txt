@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://regex-tester.vercel.app/sitemap.xml

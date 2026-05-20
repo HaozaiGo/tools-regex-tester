@@ -1,13 +1,96 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <!-- Primary Meta -->
+  <meta name="description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
+  <meta name="keywords" content="regex tester, regular expression tester, regex online, regex测试, 正则表达式在线测试, regex replace">
+  <meta name="author" content="Dudu Tools">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://regex-tester.vercel.app/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Regex Tester - 免费在线工具">
+  <meta property="og:description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
+  <meta property="og:url" content="https://regex-tester.vercel.app/">
+  <meta property="og:image" content="https://regex-tester.vercel.app/og-image.png">
+  <meta property="og:site_name" content="Regex Tester">
+  <meta property="og:locale" content="zh_CN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Regex Tester - 免费在线工具">
+  <meta name="twitter:description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
+  <meta name="twitter:image" content="https://regex-tester.vercel.app/og-image.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regex Tester - 正则表达式在线测试工具</title>
-  <meta name="description" content="免费在线正则表达式测试工具。实时匹配、分组捕获、替换调试、常用模式速查。浏览器端处理，无需安装。">
-  <meta name="keywords" content="regex tester, regular expression tester, regex online, regex tester online free, regex 测试工具">
-  <link rel="canonical" href="https://regex-tester.vercel.app/">
+  <title>Regex Tester - 免费在线工具 | 浏览器端处理 · 隐私安全</title>
   <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Regex Tester",
+  "description": "正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。",
+  "url": "https://regex-tester.vercel.app/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "All",
+  "browserRequirements": "Requires JavaScript",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "实时正则匹配与高亮",
+    "分组捕获与命名分组显示",
+    "查找替换模式",
+    "8种常用正则预设",
+    "g/i/m/s/u/y 标志位",
+    "模式语法自动解析"
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Regex Tester 是免费的吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "完全免费，无需注册，打开即用。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "支持哪些正则表达式功能？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "支持 JavaScript 正则引擎的全部功能，包括分组捕获、命名分组、非捕获分组、前瞻/后顾断言等。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "如何测试正则替换？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "切换到\"替换\"选项卡，输入替换文本（支持 $1, </head> 等引用），即可实时查看替换结果。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "正则表达式有哪些常用模式？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "工具内置了 Email、URL、手机号、强密码、日期、IPv4 等 8 种常用正则模式，一键加载。"
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
   <header class="header">
