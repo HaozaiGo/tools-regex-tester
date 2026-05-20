@@ -1,103 +1,116 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <!-- Primary Meta -->
-  <meta name="description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
-  <meta name="keywords" content="regex tester, regular expression tester, regex online, regex测试, 正则表达式在线测试, regex replace">
+  <meta name="description" content="Test JavaScript regular expressions online with live matches, highlights, capture groups, replacements, and common regex presets.">
+  <meta name="keywords" content="regex tester, regular expression tester, javascript regex tester, regex replace, regex online, regex capture groups">
   <meta name="author" content="Dudu Tools">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://regex-tester.vercel.app/">
-
-  <!-- Open Graph -->
+  <link rel="alternate" hreflang="en" href="https://regex-tester.vercel.app/">
+  <link rel="alternate" hreflang="zh-CN" href="https://regex-tester.vercel.app/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://regex-tester.vercel.app/">
+<!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Regex Tester - 免费在线工具">
-  <meta property="og:description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
+  <meta property="og:title" content="Regex Tester Online | JavaScript Regular Expression Tool">
+  <meta property="og:description" content="Test JavaScript regular expressions online with live matches, highlights, capture groups, replacements, and common regex presets.">
   <meta property="og:url" content="https://regex-tester.vercel.app/">
-  <meta property="og:image" content="https://regex-tester.vercel.app/og-image.png">
-  <meta property="og:site_name" content="Regex Tester">
-  <meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="Regex Tester">
+  <meta property="og:locale" content="en_US">
 
   <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Regex Tester - 免费在线工具">
-  <meta name="twitter:description" content="正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。">
-  <meta name="twitter:image" content="https://regex-tester.vercel.app/og-image.png">
-  <meta charset="UTF-8">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Regex Tester Online | JavaScript Regular Expression Tool">
+  <meta name="twitter:description" content="Test JavaScript regular expressions online with live matches, highlights, capture groups, replacements, and common regex presets.">
+<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regex Tester - 免费在线工具 | 浏览器端处理 · 隐私安全</title>
+  <title>Regex Tester Online | JavaScript Regular Expression Tool</title>
   <link rel="stylesheet" href="css/style.css">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Regex Tester",
-  "description": "正则表达式在线测试工具。实时匹配、高亮预览、替换调试、分组捕获、模式自动解析。浏览器端处理，无需安装。",
+  "description": "Test JavaScript regular expressions online with live matches, highlights, capture groups, replacements, and common regex presets.",
   "url": "https://regex-tester.vercel.app/",
+  "inLanguage": "en",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "All",
   "browserRequirements": "Requires JavaScript",
+  "isAccessibleForFree": true,
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD"
   },
   "featureList": [
-    "实时正则匹配与高亮",
-    "分组捕获与命名分组显示",
-    "查找替换模式",
-    "8种常用正则预设",
-    "g/i/m/s/u/y 标志位",
-    "模式语法自动解析"
-  ]
+    "Live regex match highlighting",
+    "Capture group and named group display",
+    "Find and replace testing",
+    "Common regex presets",
+    "JavaScript regex flags",
+    "Pattern explanation hints"
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "Dudu Tools"
+  }
 }
   </script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "inLanguage": "en",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Regex Tester 是免费的吗？",
+      "name": "Which regex engine does this tester use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "完全免费，无需注册，打开即用。"
+        "text": "It uses the JavaScript regular expression engine available in your browser."
       }
     },
     {
       "@type": "Question",
-      "name": "支持哪些正则表达式功能？",
+      "name": "Can I test regex replacements?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "支持 JavaScript 正则引擎的全部功能，包括分组捕获、命名分组、非捕获分组、前瞻/后顾断言等。"
+        "text": "Yes. Switch to replacement mode, enter replacement text such as $1 or $&, and preview the result instantly."
       }
     },
     {
       "@type": "Question",
-      "name": "如何测试正则替换？",
+      "name": "Are named capture groups supported?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "切换到\"替换\"选项卡，输入替换文本（支持 $1, </head> 等引用），即可实时查看替换结果。"
+        "text": "Yes, when supported by your browser, named capture groups are shown in the match details."
       }
     },
     {
       "@type": "Question",
-      "name": "正则表达式有哪些常用模式？",
+      "name": "Is my test text uploaded?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "工具内置了 Email、URL、手机号、强密码、日期、IPv4 等 8 种常用正则模式，一键加载。"
+        "text": "No. Regex matching runs in the browser, so your text stays local."
       }
     }
   ]
 }
   </script>
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Vercel Speed Insights -->
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
   <header class="header">
     <div class="container">
       <div class="header-inner">
         <h1 class="logo">🔍 Regex Tester</h1>
-        <p class="tagline">正则表达式在线测试 · 实时匹配 · 分组捕获 · 替换调试</p>
+        <p class="tagline">Live regular expression testing · match highlighting · capture groups · replacement debugging</p>
+        <nav class="language-switcher" aria-label="Language"><a class="active" href="./" lang="en">EN</a><a class="" href="zh/" lang="zh-CN">中文</a></nav>
       </div>
     </div>
   </header>
@@ -107,11 +120,11 @@
     <nav class="tabs" role="tablist">
       <button class="tab active" role="tab" aria-selected="true" data-mode="test" tabindex="0">
         <span class="tab-icon">🎯</span>
-        <span class="tab-label">匹配测试</span>
+        <span class="tab-label">Match test</span>
       </button>
       <button class="tab" role="tab" aria-selected="false" data-mode="replace" tabindex="-1">
         <span class="tab-icon">✏️</span>
-        <span class="tab-label">替换</span>
+        <span class="tab-label">Replace</span>
       </button>
     </nav>
 
@@ -120,7 +133,7 @@
       <!-- Regex Pattern -->
       <div class="input-row">
         <div class="input-group regex-input-group">
-          <label for="regex-pattern">正则表达式</label>
+          <label for="regex-pattern">Regular expression</label>
           <div class="regex-field">
             <span class="regex-delimiter">/</span>
             <input type="text" id="regex-pattern" class="regex-input" placeholder="[a-z]+@\w+\.\w+" spellcheck="false" autofocus>
@@ -129,14 +142,14 @@
           </div>
         </div>
         <div class="input-group flags-group">
-          <label>标志位</label>
+          <label>Flags</label>
           <div class="flag-badges">
-            <button class="flag-btn" data-flag="g">g <span class="flag-info">全局</span></button>
-            <button class="flag-btn" data-flag="i">i <span class="flag-info">忽略大小写</span></button>
-            <button class="flag-btn active" data-flag="m">m <span class="flag-info">多行</span></button>
-            <button class="flag-btn" data-flag="s">s <span class="flag-info">点号匹配换行</span></button>
+            <button class="flag-btn" data-flag="g">g <span class="flag-info">Global</span></button>
+            <button class="flag-btn" data-flag="i">i <span class="flag-info">Ignore case</span></button>
+            <button class="flag-btn active" data-flag="m">m <span class="flag-info">Multiline</span></button>
+            <button class="flag-btn" data-flag="s">s <span class="flag-info">Dot matches newline</span></button>
             <button class="flag-btn" data-flag="u">u <span class="flag-info">Unicode</span></button>
-            <button class="flag-btn" data-flag="y">y <span class="flag-info">粘连</span></button>
+            <button class="flag-btn" data-flag="y">y <span class="flag-info">Sticky</span></button>
           </div>
         </div>
       </div>
@@ -144,15 +157,15 @@
       <!-- Presets -->
       <div class="input-row">
         <div class="input-group">
-          <label>常用模式</label>
+          <label>Common patterns</label>
           <div class="preset-badges">
             <button class="preset-btn" data-pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" data-flags="">📧 Email</button>
             <button class="preset-btn" data-pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" data-flags="gi">🔗 URL</button>
-            <button class="preset-btn" data-pattern="1[3-9]\d{9}" data-flags="">📱 手机号</button>
-            <button class="preset-btn" data-pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]).{8,}$" data-flags="">🔒 强密码</button>
-            <button class="preset-btn" data-pattern="\d{4}[-/]\d{1,2}[-/]\d{1,2}" data-flags="">📅 日期</button>
-            <button class="preset-btn" data-pattern="(?<=<title>)(.*?)(?=<\/title>)" data-flags="gi">🏷️ HTML标签内容</button>
-            <button class="preset-btn" data-pattern="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b" data-flags="gi">📨 通用Email</button>
+            <button class="preset-btn" data-pattern="1[3-9]\d{9}" data-flags="">Phone number</button>
+            <button class="preset-btn" data-pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]).{8,}$" data-flags="">Strong password</button>
+            <button class="preset-btn" data-pattern="\d{4}[-/]\d{1,2}[-/]\d{1,2}" data-flags="">Date</button>
+            <button class="preset-btn" data-pattern="(?<=<title>)(.*?)(?=<\/title>)" data-flags="gi">HTML tag content</button>
+            <button class="preset-btn" data-pattern="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b" data-flags="gi">Generic email</button>
             <button class="preset-btn" data-pattern="^(\d{1,3}\.){3}\d{1,3}$" data-flags="">🌐 IPv4</button>
           </div>
         </div>
@@ -161,10 +174,10 @@
       <!-- Replace Input (hidden by default) -->
       <div class="input-row" id="replace-row" style="display:none">
         <div class="input-group">
-          <label for="replace-with">替换为</label>
+          <label for="replace-with">Replace with</label>
           <div class="replace-hint">
-            <input type="text" id="replace-with" class="text-input" placeholder="替换文本（可用 $1, $2 引用分组）" spellcheck="false">
-            <span class="hint-text">$& 匹配全文 · $1 第一个分组 · $` 匹配前 · $' 匹配后</span>
+            <input type="text" id="replace-with" class="text-input" placeholder="Replacement text (use $1, $2 for capture groups)" spellcheck="false">
+            <span class="hint-text">$& full match · $1 first group · $` before match · $' after match</span>
           </div>
         </div>
       </div>
@@ -173,14 +186,14 @@
       <div class="input-row stretch">
         <div class="input-group">
           <div class="label-row">
-            <label for="test-string">测试文本</label>
+            <label for="test-string">Test text</label>
             <div class="label-actions">
-              <button class="btn btn-sm" onclick="loadSample()">📝 加载示例</button>
-              <button class="btn btn-sm" onclick="clearTest()">清空</button>
+              <button class="btn btn-sm" onclick="loadSample()">📝 Load sample</button>
+              <button class="btn btn-sm" onclick="clearTest()">Clear</button>
               <span id="char-count" class="size-badge">0 chars</span>
             </div>
           </div>
-          <textarea id="test-string" class="code-editor" placeholder="在这里输入或粘贴要测试的文本..." spellcheck="false"></textarea>
+          <textarea id="test-string" class="code-editor" placeholder="Type or paste test text here..." spellcheck="false"></textarea>
         </div>
       </div>
     </section>
@@ -190,56 +203,80 @@
       <!-- Match Highlight Preview -->
       <div class="result-card">
         <div class="card-header">
-          <h3>匹配预览</h3>
+          <h3>Match preview</h3>
           <div class="card-actions">
             <span id="match-count" class="count-badge">0 matches</span>
           </div>
         </div>
         <div id="highlight-preview" class="highlight-box">
-          <span class="placeholder-text">输入正则和测试文本，匹配将高亮显示在这里</span>
+          <span class="placeholder-text">Enter a regex and test text to see highlighted matches here</span>
         </div>
       </div>
 
       <!-- Match Details -->
       <div class="result-card" id="details-card">
         <div class="card-header">
-          <h3>匹配详情</h3>
+          <h3>Match details</h3>
           <span id="match-time" class="time-badge"></span>
         </div>
         <div id="match-details" class="match-details">
-          <span class="placeholder-text">暂无匹配结果</span>
+          <span class="placeholder-text">No matches yet</span>
         </div>
       </div>
 
       <!-- Replace Result -->
       <div class="result-card" id="replace-card" style="display:none">
         <div class="card-header">
-          <h3>替换结果</h3>
+          <h3>Replacement result</h3>
           <div class="card-actions">
-            <button class="btn btn-sm" onclick="copyReplaceResult()">📋 复制</button>
+            <button class="btn btn-sm" onclick="copyReplaceResult()">Copy</button>
           </div>
         </div>
         <div id="replace-result" class="highlight-box">
-          <span class="placeholder-text">替换结果将显示在这里</span>
+          <span class="placeholder-text">Replacement output will appear here</span>
         </div>
       </div>
 
       <!-- Pattern Explanation -->
       <div class="result-card">
         <div class="card-header">
-          <h3>模式说明</h3>
+          <h3>Pattern notes</h3>
         </div>
         <div id="pattern-explanation" class="pattern-explain">
-          <span class="placeholder-text">输入正则表达式后将自动分析</span>
+          <span class="placeholder-text">Pattern analysis appears after you enter a regular expression</span>
         </div>
+      </div>
+    </section>
+    <section class="seo-content" aria-label="Tool guide and frequently asked questions">
+      <div class="seo-block">
+        <h2>What is Regex Tester?</h2>
+        <p>An online JavaScript regex tester for checking patterns, flags, capture groups, replacements, and common expressions with live highlighting.</p>
+      </div>
+      <div class="seo-grid">
+        <div class="seo-block">
+          <h2>Key Features</h2>
+          <ul><li>Live regex match highlighting</li><li>Capture group and named group display</li><li>Find and replace testing</li><li>Common regex presets</li><li>JavaScript regex flags</li><li>Pattern explanation hints</li></ul>
+        </div>
+        <div class="seo-block">
+          <h2>Common Use Cases</h2>
+          <ul><li>Debug JavaScript regular expressions</li><li>Test extraction patterns before coding</li><li>Check capture groups and replacements</li><li>Learn common regex patterns</li></ul>
+        </div>
+      </div>
+      <div class="seo-block faq-list">
+        <h2>Frequently Asked Questions</h2>
+        <details><summary>Which regex engine does this tester use?</summary><p>It uses the JavaScript regular expression engine available in your browser.</p></details>
+        <details><summary>Can I test regex replacements?</summary><p>Yes. Switch to replacement mode, enter replacement text such as $1 or 
+  </main>amp;, and preview the result instantly.</p></details>
+        <details><summary>Are named capture groups supported?</summary><p>Yes, when supported by your browser, named capture groups are shown in the match details.</p></details>
+        <details><summary>Is my test text uploaded?</summary><p>No. Regex matching runs in the browser, so your text stays local.</p></details>
       </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container">
-      <p>🔍 Regex Tester — 所有处理在浏览器端完成，无需安装</p>
-      <p class="footer-small">纯前端工具 · 零服务端 · 隐私安全</p>
+      <p>🔍 Regex Tester — All processing runs in your browser. No installation required.</p>
+      <p class="footer-small">Frontend-only tool · no server storage · privacy-first</p>
     </div>
   </footer>
 
