@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://regex-tester.vercel.app/sitemap.xml
+Sitemap: https://regex.toolkitbox.org/sitemap.xml

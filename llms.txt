@@ -1,0 +1,44 @@
+# Regex Tester
+
+> An online JavaScript regex tester for checking patterns, flags, capture groups, replacements, and common expressions with live highlighting.
+
+Canonical URL: https://regex.toolkitbox.org/
+Chinese URL: https://regex.toolkitbox.org/zh/
+
+## What it does
+
+- Live regex match highlighting
+- Capture group and named group display
+- Find and replace testing
+- Common regex presets
+- JavaScript regex flags
+- Pattern explanation hints
+
+## Best for
+
+- Debug JavaScript regular expressions
+- Test extraction patterns before coding
+- Check capture groups and replacements
+- Learn common regex patterns
+
+## Privacy
+
+This tool is designed for browser-based processing whenever possible. User-provided content is not stored by ToolkitBox.
+
+## FAQ
+
+### Which regex engine does this tester use?
+
+It uses the JavaScript regular expression engine available in your browser.
+
+### Can I test regex replacements?
+
+Yes. Switch to replacement mode, enter replacement text such as $1 or $&, and preview the result instantly.
+
+### Are named capture groups supported?
+
+Yes, when supported by your browser, named capture groups are shown in the match details.
+
+### Is my test text uploaded?
+
+No. Regex matching runs in the browser, so your text stays local.
