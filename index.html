@@ -6,6 +6,7 @@
   <meta name="keywords" content="regex tester, regular expression tester, javascript regex tester, regex replace, regex online, regex capture groups">
   <meta name="author" content="ToolkitBox">
   <meta name="robots" content="index, follow">
+  <meta name="google-adsense-account" content="ca-pub-5333037258750046">
   <link rel="canonical" href="https://regex.toolkitbox.org/">
   <link rel="alternate" hreflang="en" href="https://regex.toolkitbox.org/">
   <link rel="alternate" hreflang="zh-CN" href="https://regex.toolkitbox.org/zh/">
@@ -312,14 +313,15 @@
       <div class="seo-block faq-list">
         <h2>Frequently Asked Questions</h2>
         <details><summary>Which regex engine does this tester use?</summary><p>It uses the JavaScript regular expression engine available in your browser.</p></details>
-        <details><summary>Can I test regex replacements?</summary><p>Yes. Switch to replacement mode, enter replacement text such as $1 or 
-  </main>amp;, and preview the result instantly.</p></details>
+        <details><summary>Can I test regex replacements?</summary><p>Yes. Switch to replacement mode, enter replacement text such as <code>$1</code> or <code>$&amp;</code>, and preview the result instantly.</p></details>
         <details><summary>Are named capture groups supported?</summary><p>Yes, when supported by your browser, named capture groups are shown in the match details.</p></details>
         <details><summary>Is my test text uploaded?</summary><p>No. Regex matching runs in the browser, so your text stays local.</p></details>
       </div>
       <div class="seo-block related-guides">
-        <h2>Related guide</h2>
-        <p><a href="https://toolkitbox.org/guides/regex-testing-guide/">How to test regular expressions before shipping them</a></p>
+        <h2>Testing notes and limitations</h2>
+        <p>This tool uses the JavaScript regular expression engine provided by your browser. Patterns copied to Python, Java, Go, .NET, a database, or a command-line tool may behave differently. Test the exact flags, Unicode input, capture groups, and replacement syntax in the production engine before release.</p>
+        <p>For performance checks, include a long input that almost matches. Nested quantifiers and ambiguous alternatives can become slow on adversarial text even when short examples complete immediately. Limit untrusted input and use a parser when the data has a structured grammar.</p>
+        <p><a href="https://toolkitbox.org/guides/regex-testing-guide/">Read the complete regex release workflow</a>, including a test matrix, replacement checks, performance cases, and source references.</p>
       </div>
       <div class="seo-block related-tools">
         <h2>Related tools</h2>

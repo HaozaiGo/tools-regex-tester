@@ -6,6 +6,7 @@
   <meta name="keywords" content="regex tester, regular expression tester, regex online, regex测试, 正则表达式在线测试, regex replace">
   <meta name="author" content="ToolkitBox">
   <meta name="robots" content="index, follow">
+  <meta name="google-adsense-account" content="ca-pub-5333037258750046">
   <link rel="canonical" href="https://regex.toolkitbox.org/zh/">
   <link rel="alternate" hreflang="en" href="https://regex.toolkitbox.org/">
   <link rel="alternate" hreflang="zh-CN" href="https://regex.toolkitbox.org/zh/">
@@ -307,14 +308,15 @@
       <div class="seo-block faq-list">
         <h2>常见问题</h2>
         <details><summary>使用哪个正则引擎？</summary><p>使用浏览器内置的 JavaScript 正则表达式引擎。</p></details>
-        <details><summary>支持正则替换吗？</summary><p>支持。切换到替换模式后，可使用 $1、
-  </main>amp; 等引用并实时预览结果。</p></details>
+        <details><summary>支持正则替换吗？</summary><p>支持。切换到替换模式后，可使用 <code>$1</code>、<code>$&amp;</code> 等引用并实时预览结果。</p></details>
         <details><summary>支持命名分组吗？</summary><p>支持浏览器可用的命名捕获分组，并会在匹配详情中显示。</p></details>
         <details><summary>测试文本会上传吗？</summary><p>不会。匹配和替换都在浏览器端完成。</p></details>
       </div>
       <div class="seo-block related-guides">
-        <h2>相关指南</h2>
-        <p><a href="https://toolkitbox.org/zh/guides/regex-testing-guide/">正则表达式上线前如何测试</a></p>
+        <h2>测试说明与限制</h2>
+        <p>本工具使用浏览器提供的 JavaScript 正则表达式引擎。复制到 Python、Java、Go、.NET、数据库或命令行工具后，语法和行为可能不同。上线前需要在实际运行环境中复核标志位、Unicode、捕获组和替换语法。</p>
+        <p>性能测试不能只看短文本。应加入一段“几乎匹配”的长输入，检查嵌套量词和歧义分支是否造成明显变慢；对于有明确结构的格式，应优先使用解析器。</p>
+        <p><a href="https://toolkitbox.org/zh/guides/regex-testing-guide/">阅读完整的正则表达式发布前检查流程</a>。</p>
       </div>
       <div class="seo-block related-tools">
         <h2>相关工具</h2>
