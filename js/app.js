@@ -1,5 +1,19 @@
 /* === Regex Tester - App Logic === */
 
+const regexWorkerURL = new URL('regex-worker.js', document.currentScript.src);
+let activeWorker;
+let workerTimer;
+let lastReplacement = null;
+function uiText(en, zh) {
+  return document.documentElement.lang.startsWith('zh') ? zh : en;
+}
+
+function cancelTest() {
+  clearTimeout(workerTimer);
+  if (activeWorker) activeWorker.terminate();
+  activeWorker = null;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initFlags();
@@ -92,7 +106,8 @@ function initKeybindings() {
 
 /* ---- Main Update ---- */
 function updateResults() {
-  const patternStr = document.getElementById('regex-pattern').value.trim();
+  cancelTest();
+  const patternStr = document.getElementById('regex-pattern').value;
   const flags = document.getElementById('regex-flags').value;
   const testStr = document.getElementById('test-string').value;
   const replaceStr = document.getElementById('replace-with')?.value || '';
@@ -108,81 +123,49 @@ function updateResults() {
     return;
   }
 
-  let regex;
-  try {
-    regex = new RegExp(patternStr, flags);
-  } catch (e) {
-    document.querySelector('.regex-field')?.classList.add('regex-error');
-    showError(e.message);
+  if (testStr.length > 1000000 || patternStr.length > 10000 || replaceStr.length > 100000) {
+    showError(uiText('Input too large. Use a smaller pattern or text.', '输入过大，请缩短表达式或文本。'));
     return;
   }
-
-  const startTime = performance.now();
-
-  if (currentMode === 'test') {
-    runTestMode(regex, testStr);
-  } else {
-    runReplaceMode(regex, testStr, replaceStr);
-  }
-
-  const elapsed = ((performance.now() - startTime)).toFixed(1);
-  document.getElementById('match-time').textContent = `⚡ ${elapsed}ms`;
-
-  // Pattern explanation
-  updateExplanation(patternStr, flags);
-}
-
-/* ---- Test Mode ---- */
-function runTestMode(regex, text) {
-  const matches = [];
-  let m;
-  // For non-global regex, use exec in a loop with lastIndex reset
-  const re = new RegExp(regex.source, regex.flags.includes('g') ? regex.flags : regex.flags + 'g');
-  
-  while ((m = re.exec(text)) !== null) {
-    const groups = {};
-    if (m.groups) {
-      for (const [k, v] of Object.entries(m.groups)) {
-        if (v !== undefined) groups[k] = v;
-      }
-    }
-    matches.push({
-      index: m.index,
-      text: m[0],
-      groups: m.slice(1),
-      namedGroups: groups,
-      length: m[0].length
-    });
-    if (m.index === re.lastIndex) re.lastIndex++;
-    // Safety limit
-    if (matches.length > 10000) break;
-  }
-
-  // Update highlight preview
-  updateHighlight(text, matches);
-
-  // Update match count
-  document.getElementById('match-count').textContent = `${matches.length} match${matches.length !== 1 ? 'es' : ''}`;
-
-  // Update details
-  updateDetails(matches);
-}
-
-/* ---- Replace Mode ---- */
-function runReplaceMode(regex, text, replacement) {
+  resetResults();
+  document.getElementById('match-time').textContent = uiText('Testing...', '测试中...');
   try {
-    const result = text.replace(regex, replacement);
-    document.getElementById('replace-result').innerHTML = escapeHtml(result) || '<span class="placeholder-text">(空结果)</span>';
-    
-    // Count replacements
-    const re = new RegExp(regex.source, regex.flags.includes('g') ? regex.flags : regex.flags + 'g');
-    const count = (text.match(re) || []).length;
-    document.getElementById('match-count').textContent = `${count} replacement${count !== 1 ? 's' : ''}`;
-    
-    // Show before/after diff in highlight
-    updateReplaceHighlight(text, regex);
-  } catch (e) {
-    document.getElementById('replace-result').innerHTML = `<span class="error-text">替换失败: ${escapeHtml(e.message)}</span>`;
+    const worker = new Worker(regexWorkerURL);
+    activeWorker = worker;
+    const fail = message => {
+      if (activeWorker !== worker) return;
+      cancelTest();
+      document.querySelector('.regex-field')?.classList.add('regex-error');
+      showError(message);
+    };
+    workerTimer = setTimeout(() => fail(uiText('Pattern timed out after 1 second. Simplify it and try again.', '表达式运行超过 1 秒，已停止。请简化后重试。')), 1000);
+    worker.onerror = () => fail(uiText('Regex worker failed. Please try again.', '正则测试进程失败，请重试。'));
+    worker.onmessage = ({ data }) => {
+      if (activeWorker !== worker) return;
+      if (data.error) {
+        const messages = {
+          TOO_MANY_REPLACEMENTS: uiText('More than 10,000 replacements. Narrow the pattern or shorten the text.', '替换次数超过 10,000，请缩小匹配范围或缩短文本。'),
+          REPLACEMENT_TOO_LARGE: uiText('Replacement may exceed 1,000,000 characters. Shorten the text or replacement.', '替换结果可能超过 1,000,000 字符，请缩短文本或替换内容。')
+        };
+        fail(messages[data.errorCode] || data.error);
+        return;
+      }
+      cancelTest();
+      updateHighlight(testStr, data.matches);
+      updateDetails(data.matches);
+      const count = data.matches.length + (data.truncated ? '+' : '');
+      document.getElementById('match-count').textContent = count + (currentMode === 'replace' ? uiText(' replacements', ' 处替换') : uiText(' matches', ' 个匹配'));
+      document.getElementById('match-time').textContent = `${data.elapsed}ms`;
+      if (currentMode === 'replace') {
+        lastReplacement = data.result;
+        document.getElementById('replace-result').textContent = data.result;
+      }
+      updateExplanation(patternStr, flags);
+    };
+    worker.postMessage({ pattern: patternStr, flags, text: testStr, replacement: replaceStr, mode: currentMode });
+  } catch (error) {
+    cancelTest();
+    showError(error.message);
   }
 }
 
@@ -190,7 +173,7 @@ function runReplaceMode(regex, text, replacement) {
 function updateHighlight(text, matches) {
   const preview = document.getElementById('highlight-preview');
   if (!text) {
-    preview.innerHTML = '<span class="placeholder-text">输入测试文本后将显示匹配高亮</span>';
+    preview.textContent = uiText('Enter test text to highlight matches', '输入测试文本后将显示匹配高亮');
     return;
   }
   if (matches.length === 0) {
@@ -221,41 +204,12 @@ function updateHighlight(text, matches) {
   preview.innerHTML = result;
 }
 
-/* ---- Replace Highlight ---- */
-function updateReplaceHighlight(text, regex) {
-  const preview = document.getElementById('highlight-preview');
-  if (!text) {
-    preview.innerHTML = '<span class="placeholder-text">输入测试文本后将显示匹配高亮</span>';
-    return;
-  }
-
-  const re = new RegExp(regex.source, regex.flags.includes('g') ? regex.flags : regex.flags + 'g');
-  let result = '';
-  let lastIndex = 0;
-  let m;
-  
-  const savedRe = new RegExp(regex.source, regex.flags + 'g');
-  while ((m = savedRe.exec(text)) !== null) {
-    if (m.index > lastIndex) {
-      result += escapeHtml(text.substring(lastIndex, m.index));
-    }
-    result += `<span class="match-highlight" title="Match at position ${m.index}">${escapeHtml(m[0])}</span>`;
-    lastIndex = m.index + m[0].length;
-    if (m.index === savedRe.lastIndex) savedRe.lastIndex++;
-    if (lastIndex > 100000) break;
-  }
-  if (lastIndex < text.length) {
-    result += escapeHtml(text.substring(lastIndex));
-  }
-  preview.innerHTML = result || escapeHtml(text);
-}
-
 /* ---- Match Details ---- */
 function updateDetails(matches) {
   const container = document.getElementById('match-details');
   
   if (matches.length === 0) {
-    container.innerHTML = '<span class="placeholder-text">暂无匹配结果</span>';
+    container.textContent = uiText('No matches', '暂无匹配结果');
     return;
   }
 
@@ -293,7 +247,7 @@ function updateDetails(matches) {
   }
 
   if (matches.length > 100) {
-    html += `<div class="match-item" style="color: var(--text-dim); text-align: center;">... 还有 ${matches.length - 100} 个匹配未显示</div>`;
+    html += `<div class="match-item">${uiText(`${matches.length - 100} more matches`, `还有 ${matches.length - 100} 个匹配未显示`)}</div>`;
   }
 
   container.innerHTML = html;
@@ -304,7 +258,7 @@ function updateExplanation(pattern, flags) {
   const container = document.getElementById('pattern-explanation');
   
   if (!pattern) {
-    container.innerHTML = '<span class="placeholder-text">输入正则表达式后将自动分析</span>';
+    container.textContent = uiText('Enter a pattern to analyze', '输入正则表达式后将自动分析');
     return;
   }
 
@@ -312,7 +266,7 @@ function updateExplanation(pattern, flags) {
   const parts = parsePattern(pattern);
   
   if (parts.length === 0) {
-    html = `<div class="explain-row"><span class="explain-desc">无法解析此模式的结构</span></div>`;
+    html = `<div class="explain-row"><span class="explain-desc">${uiText('Unable to explain this pattern', '无法解析此模式的结构')}</span></div>`;
   } else {
     for (const p of parts) {
       html += `<div class="explain-row"><span class="explain-token">${escapeHtml(p.token)}</span><span class="explain-sep"> → </span><span class="explain-desc">${escapeHtml(p.desc)}</span></div>`;
@@ -322,19 +276,21 @@ function updateExplanation(pattern, flags) {
   // Flags explanation
   if (flags) {
     const flagDescs = {
-      g: '全局匹配（查找所有匹配项）',
-      i: '忽略大小写',
-      m: '多行模式（^/$ 匹配每行首尾）',
-      s: '点号通配模式（. 匹配换行符）',
-      u: 'Unicode 模式',
-      y: '粘连模式（从 lastIndex 开始匹配）'
+      g: uiText('Global (all matches)', '全局匹配（查找所有匹配项）'),
+      i: uiText('Ignore case', '忽略大小写'),
+      m: uiText('Multiline anchors', '多行模式（^/$ 匹配每行首尾）'),
+      s: uiText('Dot matches newlines', '点号通配模式（. 匹配换行符）'),
+      u: uiText('Unicode', 'Unicode 模式'),
+      v: uiText('Unicode sets', 'Unicode 字符集'),
+      d: uiText('Match indices', '匹配索引'),
+      y: uiText('Sticky (match at lastIndex)', '粘连模式（从 lastIndex 开始匹配）')
     };
     html += `<div class="explain-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">`;
-    html += `<span class="explain-desc"><strong>标志位:</strong> `;
+    html += `<span class="explain-desc"><strong>${uiText('Flags', '标志位')}:</strong> `;
     for (const f of flags) {
-      html += `/${f} ${flagDescs[f] || '未知'}; `;
+      html += `/${f} ${flagDescs[f] || uiText('Unknown', '未知')}; `;
     }
-    html += `</div>`;
+    html += `</span></div>`;
   }
 
   container.innerHTML = html;
@@ -366,7 +322,7 @@ function parsePattern(pattern) {
       const token = pattern.substring(i, j);
       const inner = token.slice(1, -1);
       const uniqueChars = [...new Set(inner.replace(/\\[a-z]/gi, ''))].filter(c => c !== '-');
-      parts.push({ token, desc: `字符集 [${inner.length > 15 ? inner.substring(0, 12) + '...' : inner}]` });
+      parts.push({ token, desc: uiText('Character set', '字符集') + ` [${inner.length > 15 ? inner.substring(0, 12) + '...' : inner}]` });
       i = j;
       continue;
     }
@@ -384,10 +340,10 @@ function parsePattern(pattern) {
         j++;
       }
       const token = pattern.substring(i, j);
-      let desc = '分组';
-      if (isNonCap) desc = '非捕获分组';
-      else if (isNamed) desc = '命名分组';
-      else desc = `捕获分组 #${parts.filter(p => p.token.startsWith('(') && !p.token.startsWith('(?:')).length + 1}`;
+      let desc = uiText('Group', '分组');
+      if (isNonCap) desc = uiText('Non-capturing group or assertion', '非捕获分组或断言');
+      else if (isNamed) desc = uiText('Named group', '命名分组');
+      else desc = uiText('Capturing group', '捕获分组') + ` #${parts.filter(p => p.token.startsWith('(') && !p.token.startsWith('(?:')).length + 1}`;
       parts.push({ token: token.length > 20 ? token.substring(0, 17) + '...' : token, desc });
       i = j;
       continue;
@@ -395,11 +351,11 @@ function parsePattern(pattern) {
 
     // Quantifier
     if (pattern[i] === '*' || pattern[i] === '+' || pattern[i] === '?') {
-      const desc = { '*': '零次或多次', '+': '一次或多次', '?': '零次或一次' }[pattern[i]];
+      const desc = { '*': uiText('Zero or more', '零次或多次'), '+': uiText('One or more', '一次或多次'), '?': uiText('Zero or one', '零次或一次') }[pattern[i]];
       parts.push({ token: pattern[i], desc });
       // Check for lazy
       if (i + 1 < pattern.length && pattern[i + 1] === '?') {
-        parts[parts.length - 1].desc += '（非贪婪）';
+        parts[parts.length - 1].desc += uiText(' (lazy)', '（非贪婪）');
         i++;
       }
       i++;
@@ -410,20 +366,20 @@ function parsePattern(pattern) {
       let j = i + 1;
       while (j < pattern.length && pattern[j] !== '}') j++;
       const token = pattern.substring(i, j + 1);
-      parts.push({ token, desc: `重复 ${token.slice(1, -1)} 次` });
+      parts.push({ token, desc: uiText(`Repeat ${token.slice(1, -1)} times`, `重复 ${token.slice(1, -1)} 次`) });
       i = j + 1;
       continue;
     }
 
     // Anchors
-    if (pattern[i] === '^') { parts.push({ token: '^', desc: '字符串开头' }); i++; continue; }
-    if (pattern[i] === '$') { parts.push({ token: '$', desc: '字符串结尾' }); i++; continue; }
-    if (pattern[i] === '.') { parts.push({ token: '.', desc: '任意单个字符（除换行）' }); i++; continue; }
-    if (pattern[i] === '|') { parts.push({ token: '|', desc: '或（交替匹配）' }); i++; continue; }
+    if (pattern[i] === '^') { parts.push({ token: '^', desc: uiText('Start anchor', '字符串开头') }); i++; continue; }
+    if (pattern[i] === '$') { parts.push({ token: '$', desc: uiText('End anchor', '字符串结尾') }); i++; continue; }
+    if (pattern[i] === '.') { parts.push({ token: '.', desc: uiText('Any character (newline depends on s flag)', '任意字符（换行取决于 s 标志）') }); i++; continue; }
+    if (pattern[i] === '|') { parts.push({ token: '|', desc: uiText('Alternation', '或（交替匹配）') }); i++; continue; }
 
     // Default - literal character
     const ch = pattern[i];
-    const desc = /[a-zA-Z0-9]/.test(ch) ? `字面字符 '${ch}'` : `特殊字符 '${ch}'`;
+    const desc = uiText(`Literal character '${ch}'`, `字面字符 '${ch}'`);
     parts.push({ token: ch, desc });
     i++;
   }
@@ -432,6 +388,10 @@ function parsePattern(pattern) {
 }
 
 function getEscapeDesc(ch) {
+  if (!document.documentElement.lang.startsWith('zh')) {
+    const english = {d:'Digit [0-9]', D:'Non-digit', w:'Word character [a-zA-Z0-9_]', W:'Non-word character', s:'Whitespace', S:'Non-whitespace', b:'Word boundary', B:'Non-word boundary', n:'Newline', r:'Carriage return', t:'Tab', '0':'Null character'};
+    return english[ch] || `Escaped character '\\${ch}'`;
+  }
   const map = {
     'd': '数字 [0-9]', 'D': '非数字',
     'w': '单词字符 [a-zA-Z0-9_]', 'W': '非单词字符',
@@ -452,23 +412,27 @@ function getEscapeDesc(ch) {
 
 /* ---- Error Display ---- */
 function showError(msg) {
+  lastReplacement = null;
+  document.getElementById('replace-result').textContent = '';
+  document.getElementById('match-time').textContent = '';
   const preview = document.getElementById('highlight-preview');
   preview.innerHTML = `<span class="error-text">❌ ${escapeHtml(msg)}</span>`;
-  document.getElementById('match-details').innerHTML = '<span class="placeholder-text">正则表达式无效</span>';
-  document.getElementById('match-count').textContent = '0 matches';
+  document.getElementById('match-details').textContent = uiText('Pattern could not be evaluated', '无法计算表达式');
+  document.getElementById('match-count').textContent = uiText('0 matches', '0 个匹配');
   const explain = document.getElementById('pattern-explanation');
   explain.innerHTML = `<span class="error-text">❌ ${escapeHtml(msg)}</span>`;
 }
 
 /* ---- Reset ---- */
 function resetResults() {
-  document.getElementById('highlight-preview').innerHTML = '<span class="placeholder-text">输入正则和测试文本，匹配将高亮显示在这里</span>';
-  document.getElementById('match-details').innerHTML = '<span class="placeholder-text">暂无匹配结果</span>';
-  document.getElementById('match-count').textContent = '0 matches';
+  lastReplacement = null;
+  document.getElementById('highlight-preview').textContent = uiText('Enter a pattern and test text', '输入正则和测试文本，匹配将高亮显示在这里');
+  document.getElementById('match-details').textContent = uiText('No matches', '暂无匹配结果');
+  document.getElementById('match-count').textContent = uiText('0 matches', '0 个匹配');
   document.getElementById('match-time').textContent = '';
   const explain = document.getElementById('pattern-explanation');
-  explain.innerHTML = '<span class="placeholder-text">输入正则表达式后将自动分析</span>';
-  document.getElementById('replace-result').innerHTML = '<span class="placeholder-text">替换结果将显示在这里</span>';
+  explain.textContent = uiText('Enter a pattern to analyze', '输入正则表达式后将自动分析');
+  document.getElementById('replace-result').textContent = uiText('Replacement result', '替换结果将显示在这里');
 }
 
 /* ---- Sample Data ---- */
@@ -518,13 +482,11 @@ function clearTest() {
 
 /* ---- Copy Replace Result ---- */
 function copyReplaceResult() {
-  const el = document.getElementById('replace-result');
-  const text = el.textContent;
-  if (!text || text.includes('替换结果')) {
-    showToast('没有替换结果可以复制');
+  if (lastReplacement === null) {
+    showToast(uiText('No replacement result to copy', '没有替换结果可以复制'));
     return;
   }
-  navigator.clipboard.writeText(text).then(() => showToast('✅ 已复制')).catch(() => showToast('❌ 复制失败'));
+  navigator.clipboard.writeText(lastReplacement).then(() => showToast(uiText('Copied', '已复制'))).catch(() => showToast(uiText('Copy failed', '复制失败')));
 }
 
 /* ---- Helpers ---- */
@@ -556,6 +518,8 @@ function showToast(msg) {
 let updateTimer;
 const originalUpdate = updateResults;
 updateResults = function() {
+  cancelTest();
+  lastReplacement = null;
   clearTimeout(updateTimer);
   updateTimer = setTimeout(originalUpdate, 150);
 };
