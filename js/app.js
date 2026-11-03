@@ -132,16 +132,26 @@ function updateResults() {
   try {
     const worker = new Worker(regexWorkerURL);
     activeWorker = worker;
+    let started = false;
     const fail = message => {
       if (activeWorker !== worker) return;
       cancelTest();
       document.querySelector('.regex-field')?.classList.add('regex-error');
       showError(message);
     };
-    workerTimer = setTimeout(() => fail(uiText('Pattern timed out after 1 second. Simplify it and try again.', '表达式运行超过 1 秒，已停止。请简化后重试。')), 1000);
+    // Network startup is separate from the deadline for executing untrusted patterns.
+    workerTimer = setTimeout(() => fail(uiText('Regex engine could not load within 10 seconds. Check your connection and try again.', '正则引擎未能在 10 秒内加载，请检查网络后重试。')), 10000);
     worker.onerror = () => fail(uiText('Regex worker failed. Please try again.', '正则测试进程失败，请重试。'));
     worker.onmessage = ({ data }) => {
       if (activeWorker !== worker) return;
+      if (data.ready) {
+        if (started) return;
+        started = true;
+        clearTimeout(workerTimer);
+        workerTimer = setTimeout(() => fail(uiText('Pattern timed out after 1 second. Simplify it and try again.', '表达式运行超过 1 秒，已停止。请简化后重试。')), 1000);
+        worker.postMessage({ pattern: patternStr, flags, text: testStr, replacement: replaceStr, mode: currentMode });
+        return;
+      }
       if (data.error) {
         const messages = {
           TOO_MANY_REPLACEMENTS: uiText('More than 10,000 replacements. Narrow the pattern or shorten the text.', '替换次数超过 10,000，请缩小匹配范围或缩短文本。'),
@@ -162,7 +172,6 @@ function updateResults() {
       }
       updateExplanation(patternStr, flags);
     };
-    worker.postMessage({ pattern: patternStr, flags, text: testStr, replacement: replaceStr, mode: currentMode });
   } catch (error) {
     cancelTest();
     showError(error.message);

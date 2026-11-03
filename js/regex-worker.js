@@ -50,3 +50,5 @@ self.onmessage = ({ data }) => {
     self.postMessage({ error: error.message, errorCode: error.code });
   }
 };
+
+self.postMessage({ ready: true });

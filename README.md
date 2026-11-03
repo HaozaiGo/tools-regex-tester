@@ -36,3 +36,14 @@ npx vercel --prod
 ## 📄 许可
 
 MIT
+
+## Regression Checks
+
+`tests/browser-smoke.cjs` is run by the shared runner in `../json-toolbox/tests/toolkit-smoke.cjs`.
+`tests/worker-startup.cjs` additionally simulates delayed worker downloads, input cancellation,
+the one-second execution deadline, the separate ten-second startup deadline, and recovery
+in both languages. Set `PLAYWRIGHT_MODULE` to an installed Playwright module if needed.
+
+```sh
+node tests/worker-startup.cjs
+```
